@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500&display=swap" rel="stylesheet"> 
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+    <div class="containers">
+        <div class="container1">
+            <div class="left-block search">
+                <input type="text" class="search-input btn-input" placeholder="Search">
+                <i class="material-icons icon" >search</i>
+            </div>
+            <div class="left-block add">
+                <button class="add-btn btn-input">New note </button>
+                <i class="material-icons icon add-icon" >add</i>
+            </div>
+            <div class="left-block delete">
+                <button id="delete-btn" class="delete-btn btn-input">Delete</button>
+                <i class="material-icons icon trash" >delete</i>   
+            </div>
+        </div>
+        <div class="container2">
+           <div class="all-notes">
+               <h1>All Notes</h1>
+               <p id="counter">0 notes</p>
+           </div> 
+            <div class="notes">
+                
+            </div> 
+    </div>
+        <div class="container3">
+            <input id="title" maxlength="30" type="text" class="title" placeholder="Title">
+            <textarea class="note-text" id="note-text"></textarea>    
+        </div>
+    </div>
+    <script src="./index.js"></script>
+</body>
+</html>
