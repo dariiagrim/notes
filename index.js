@@ -4,6 +4,7 @@ class Note {
         this.title = 'Untitled'
         this.selected = false
         this.id = Date.now()
+        this.date = this.set_date()
     }
     createNote() {
         let note = document.createElement("div")
@@ -13,7 +14,19 @@ class Note {
         }
         note.setAttribute('id', this.id.toString())
         note.innerHTML = `<p class="title-name">${this.title}</p><button class="select-btn"></button>`
+        note.innerHTML += `<p class="date">${this.date}</p>`
         return note    
+    }
+    set_date() {
+        const current_date = new Date()
+        const monthes = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        const day = current_date.getDate().toString()
+        const month = monthes[current_date.getMonth()].toString()
+        const hours = zerofill(current_date.getHours().toString())
+        const minutes = zerofill(current_date.getMinutes().toString())
+        const seconds = zerofill(current_date.getSeconds().toString())
+        const date  = `${month} ${day}, ${hours}:${minutes}:${seconds}`
+        return date
     }
 }
 const display = document.getElementsByClassName("notes")[0] //id in html
@@ -34,6 +47,11 @@ window.onload = function() {
 }
 let notes = []
 window.onunload = function() {
+    for (let i = 0; i < notes.length; i++) {
+        if (notes[i].selected === true)
+            notes[i].selected = false
+    }
+    selected = null
     localStorage.setItem('notes', JSON.stringify(notes)) 
 }
 const add_btn = document.getElementsByClassName("add-btn")[0] //id
@@ -48,7 +66,7 @@ add_btn.onclick = function() {
 function render(array) {
     display.innerHTML = ''
     for (let i = 0; i < array.length; i++) {
-        display.appendChild(array[i].createNote())
+        display.prepend(array[i].createNote())
     }
     if (array.length == 1) {
         counter.innerText = '1 note'    
@@ -78,6 +96,9 @@ window.onclick = function(event) {
                 selected = notes[i]
                 notes[i].selected = true
             } else {
+                if (notes[i].title === '') {
+                    notes[i].title = 'Untitled'
+                }
                 notes[i].selected = false
             }
         }
@@ -144,7 +165,17 @@ search.oninput = function() {
             temp.push(notes[i])
         }
     }
-    header.innerText = '*' + search.value.toString() + '*'
+    header.innerText =  search.value.toString()
     was_searched = true
     render(temp)
+}
+
+function zerofill(str) {
+    let copy = ''
+    if (str.length === 1) {
+        copy += '0' + str;
+    } else {
+       copy += str
+    }
+    return copy
 }

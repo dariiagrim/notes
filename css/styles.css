@@ -9,7 +9,7 @@
     height: 100%;
 }
 .container1 {
-    background-color: #131111;
+    background: linear-gradient(#000000, #131111, #090e09, #121b0d, #162e16);
     width: 15%;
 }
 
@@ -53,10 +53,6 @@
     color: #fff;
 }
 
-
-.trash:hover {
-    color: red;
-}
 .search-input {
     background-color: #2a2a2a;
 }
@@ -72,13 +68,13 @@ button.btn-input {
 }
 
 .add-btn {
-    background: linear-gradient(#267a19, #32db18);
+    background: linear-gradient(#fff, #348634, #489048);
 }
 
 .all-notes {
     height: 100px;
     width: 100%;
-    background: linear-gradient(#fff, rgb(238, 235, 235));
+    background: linear-gradient( to right, #ffffff, #d8e6d8, #a9daa3,#489048);
     position: relative;
     padding: 10px;
     box-sizing: border-box;
@@ -96,6 +92,7 @@ button.btn-input {
     padding-left: 10px;
     font-size: 30px;
     box-sizing: border-box;
+    border: none;
 }
 
 .note-text {
@@ -106,6 +103,7 @@ button.btn-input {
     padding: 10px;
     resize: none;
     box-sizing: border-box;
+    border: none;
 }
 
 .note-btn {
@@ -125,7 +123,8 @@ button.btn-input {
     position: relative;
     padding: 10px;
     box-sizing: border-box;
-    border: 1px solid #2a2a2a;    
+    border: 1px solid #2a2a2a;
+    border-top: none;    
 }
 
 .select-btn {
@@ -133,11 +132,29 @@ button.btn-input {
     right: 0;
     top:0;
     height: 100%;
-    width: 10%;
-    background: linear-gradient(#267a19, #32db18);
-    border-color: #267a19;
+    width: 5%;
+    background: linear-gradient(#fff, #93cc93, #489048);
+    border: none;
 }
 
 .selected {
-    background: linear-gradient(#267a19, #32db18);
+    border: 2px solid green;
+    background: linear-gradient( #93cc93, #489048);
 }
+
+#header  {
+    font-weight: lighter;
+    font-size: 30px;
+}
+
+.date {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+}
+
+.title-name {
+    font-weight: bold;
+    font-size: larger;
+}
+
