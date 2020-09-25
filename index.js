@@ -17,25 +17,45 @@ class Note {
     }
 }
 const display = document.getElementsByClassName("notes")[0] //id in html
+
+window.onload = function() {
+    const storage = localStorage.getItem('notes')
+    if (storage === null) {
+        notes = []
+    } else {
+        notes = JSON.parse(storage)
+        for (let i = 0; i < notes.length; i++) {
+            notes[i].__proto__ = Note.prototype
+        }
+        render(notes)
+    }
+    console.log(storage)
+    
+}
 let notes = []
+window.onunload = function() {
+    localStorage.setItem('notes', JSON.stringify(notes)) 
+}
 const add_btn = document.getElementsByClassName("add-btn")[0] //id
 add_btn.onclick = function() {
     let note = new Note()
     notes.push(note)
-    render()
+    header.innerText = 'All Notes'
+    search.value = ''
+    render(notes)
 }
 
-function render() {
+function render(array) {
     display.innerHTML = ''
-    for (let i = 0; i < notes.length; i++) {
-        display.appendChild(notes[i].createNote())
+    for (let i = 0; i < array.length; i++) {
+        display.appendChild(array[i].createNote())
     }
-    if (notes.length == 1) {
+    if (array.length == 1) {
         counter.innerText = '1 note'    
     } else {
-        counter.innerText = `${notes.length} notes`       
+        counter.innerText = `${array.length} notes`       
     }
-    if (selected) {
+    if (selected !== null) {
         title.disabled = false
         title.value = selected.title
         note_text.disabled = false
@@ -61,7 +81,12 @@ window.onclick = function(event) {
                 notes[i].selected = false
             }
         }
-        render()
+        if (was_searched) {
+            render(temp)
+        } else {
+            render(notes)
+        }
+        
     }
 }
 
@@ -73,22 +98,53 @@ delete_btn.onclick = function() {
             copy.push(notes[i])
         }
     }
+    was_searched = false
+    search.value = ''
+    header.innerText = 'All Notes'
+    selected = null
     notes = copy
-    render()
+    render(notes)
 } 
 
 const title = document.getElementById('title')
 const note_text = document.getElementById('note-text')
+title.value = ''
 title.disabled = true
+note_text.value = ''
 note_text.disabled = true
 
 title.oninput = function() {
     selected.title = title.value
-    render()
+    render(notes)
 }
 note_text.oninput = function() {
     selected.text = note_text.value
-    render()
+    render(notes)
 }
 
 const counter = document.getElementById('counter')
+
+let header = document.getElementById('header')
+const search = document.getElementById('search-input')
+search.value = ''
+let was_searched = false
+let temp = []
+search.oninput = function() {
+    let value = search.value
+    if (value == '') {
+        header.innerText = 'All Notes'
+        render(notes)
+        was_searched = false
+        return   
+    }
+    let pattern = new RegExp(value, 'i') 
+    temp = []
+    for (let i = 0; i < notes.length; i++) {
+        if (notes[i].title.search(pattern) != -1 || notes[i].text.search(pattern) != -1) {
+            temp.push(notes[i])
+        }
+    }
+    header.innerText = '*' + search.value.toString() + '*'
+    was_searched = true
+    render(temp)
+}
