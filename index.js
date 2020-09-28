@@ -1,35 +1,20 @@
-class Note {
-    constructor() {
-        this.text = ''
-        this.title = 'Untitled'
-        this.selected = false
-        this.id = Date.now()
-        this.date = this.set_date()
-    }
-    createNote() {
-        let note = document.createElement("div")
-        note.classList.add("note")
-        if (this.selected) {
-            note.classList.add("selected")
-        }
-        note.setAttribute('id', this.id.toString())
-        note.innerHTML = `<p class="title-name">${this.title}</p><button class="select-btn"></button>`
-        note.innerHTML += `<p class="date">${this.date}</p>`
-        return note    
-    }
-    set_date() {
-        const current_date = new Date()
-        const monthes = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-        const day = current_date.getDate().toString()
-        const month = monthes[current_date.getMonth()].toString()
-        const hours = zerofill(current_date.getHours().toString())
-        const minutes = zerofill(current_date.getMinutes().toString())
-        const seconds = zerofill(current_date.getSeconds().toString())
-        const date  = `${month} ${day}, ${hours}:${minutes}:${seconds}`
-        return date
-    }
-}
 const display = document.getElementsByClassName("notes")[0] //id in html
+const delete_btn = document.getElementById('delete-btn')
+const add_btn = document.getElementsByClassName("add-btn")[0] //id
+const title = document.getElementById('title')
+const note_text = document.getElementById('note-text')
+const counter = document.getElementById('counter')
+let header = document.getElementById('header')
+const search = document.getElementById('search-input')
+let notes = []
+let was_searched = false
+let temp = []
+let selected = null
+title.value = ''
+title.disabled = true
+note_text.value = ''
+note_text.disabled = true
+search.value = ''
 
 window.onload = function() {
     const storage = localStorage.getItem('notes')
@@ -43,9 +28,24 @@ window.onload = function() {
         render(notes)
     }
     console.log(storage)
+    const id = getParameter('id')
+    console.log(id)
+    if (id) {
+        for (let i = 0; i < notes.length; i++) {
+            if (notes[i].id == id) {
+                selected = notes[i]
+                notes[i].selected = true
+                
+            } else {
+                notes[i].selected = false
+            }
+        }
+        console.log(notes)
+        render(notes)    
+    }
     
 }
-let notes = []
+
 window.onunload = function() {
     for (let i = 0; i < notes.length; i++) {
         if (notes[i].selected === true)
@@ -54,39 +54,7 @@ window.onunload = function() {
     selected = null
     localStorage.setItem('notes', JSON.stringify(notes)) 
 }
-const add_btn = document.getElementsByClassName("add-btn")[0] //id
-add_btn.onclick = function() {
-    let note = new Note()
-    notes.push(note)
-    header.innerText = 'All Notes'
-    search.value = ''
-    render(notes)
-}
 
-function render(array) {
-    display.innerHTML = ''
-    for (let i = 0; i < array.length; i++) {
-        display.prepend(array[i].createNote())
-    }
-    if (array.length == 1) {
-        counter.innerText = '1 note'    
-    } else {
-        counter.innerText = `${array.length} notes`       
-    }
-    if (selected !== null) {
-        title.disabled = false
-        title.value = selected.title
-        note_text.disabled = false
-        note_text.value = selected.text   
-    } else {
-        title.disabled = true
-        title.value = ''
-        note_text.disabled = true
-        note_text.value = ''
-    }
-
-}
-let selected = null
 window.onclick = function(event) {
     if (event.target.classList.contains('select-btn')) {
         let id = event.target.parentNode.id
@@ -95,10 +63,9 @@ window.onclick = function(event) {
             if (notes[i].id == id) {
                 selected = notes[i]
                 notes[i].selected = true
+                window.history.replaceState(null, null, `?id=${notes[i].id}`)
             } else {
-                if (notes[i].title === '') {
-                    notes[i].title = 'Untitled'
-                }
+                
                 notes[i].selected = false
             }
         }
@@ -111,7 +78,14 @@ window.onclick = function(event) {
     }
 }
 
-const delete_btn = document.getElementById('delete-btn')
+add_btn.onclick = function() {
+    let note = new Note()
+    notes.push(note)
+    header.innerText = 'All Notes'
+    search.value = ''
+    render(notes)
+}
+
 delete_btn.onclick = function() {
     let copy = []
     for (let i = 0; i < notes.length; i++) {
@@ -127,12 +101,6 @@ delete_btn.onclick = function() {
     render(notes)
 } 
 
-const title = document.getElementById('title')
-const note_text = document.getElementById('note-text')
-title.value = ''
-title.disabled = true
-note_text.value = ''
-note_text.disabled = true
 
 title.oninput = function() {
     selected.title = title.value
@@ -143,13 +111,6 @@ note_text.oninput = function() {
     render(notes)
 }
 
-const counter = document.getElementById('counter')
-
-let header = document.getElementById('header')
-const search = document.getElementById('search-input')
-search.value = ''
-let was_searched = false
-let temp = []
 search.oninput = function() {
     let value = search.value
     if (value == '') {
@@ -170,12 +131,46 @@ search.oninput = function() {
     render(temp)
 }
 
-function zerofill(str) {
-    let copy = ''
-    if (str.length === 1) {
-        copy += '0' + str;
-    } else {
-       copy += str
+
+function getParameter(param) {
+    const location = window.location.search
+    let params = location.split('?')[1]
+    if (!params) {
+        return null
     }
-    return copy
+    params = params.split('&')
+    for (let i = 0; i < params.length; i++){
+        let temp = params[i].split('=')
+        if (temp[0] === param) {
+            return temp[1]
+        }
+    }
+    return null
+}
+
+function render(array) {
+    display.innerHTML = ''
+    for (let i = 0; i < array.length; i++) {
+        display.prepend(array[i].createNote())
+    }
+    if (array.length == 1) {
+        counter.innerText = '1 note'    
+    } else {
+        counter.innerText = `${array.length} notes`       
+    }
+    if (selected !== null) {
+        title.disabled = false
+        title.value = selected.title
+        note_text.disabled = false
+        note_text.value = selected.text   
+        if (selected.title === '') {
+            selected.title = 'Untitled'
+        }
+    } else {
+        title.disabled = true
+        title.value = ''
+        note_text.disabled = true
+        note_text.value = ''
+    }
+
 }
