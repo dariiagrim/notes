@@ -1,6 +1,6 @@
-const display = document.getElementsByClassName("notes")[0] //id in html
+const display = document.getElementsByClassName("notes")[0] 
 const delete_btn = document.getElementById('delete-btn')
-const add_btn = document.getElementsByClassName("add-btn")[0] //id
+const add_btn = document.getElementsByClassName("add-btn")[0]
 const title = document.getElementById('title')
 const note_text = document.getElementById('note-text')
 const counter = document.getElementById('counter')
@@ -27,9 +27,7 @@ window.onload = function() {
         }
         render(notes)
     }
-    console.log(storage)
     const id = getParameter('id')
-    console.log(id)
     if (id) {
         for (let i = 0; i < notes.length; i++) {
             if (notes[i].id == id) {
@@ -40,7 +38,6 @@ window.onload = function() {
                 notes[i].selected = false
             }
         }
-        console.log(notes)
         render(notes)    
     }
     
@@ -58,7 +55,6 @@ window.onunload = function() {
 window.onclick = function(event) {
     if (event.target.classList.contains('select-btn')) {
         let id = event.target.parentNode.id
-        console.log(id)
         for (let i = 0; i < notes.length; i++) {
             if (notes[i].id == id) {
                 selected = notes[i]
